@@ -90,9 +90,10 @@ np_test_data = np.array(test_data)
 
 rfr = RandomForestRegressor()
 
-rfr.fit(np_train_data[:, 1:11], train_data_target)
-predict_result = rfr.predict(np_test_data[:, 1:11])
-print(predict_result)
+print(attributes[1:len(attributes) - 1])
+rfr.fit(np_train_data[:, 1:len(attributes) - 1], train_data_target)
+predict_result = rfr.predict(np_test_data[:, 1:len(attributes) - 1])
+# print(predict_result)
 
 row = 1
 col = 1
@@ -115,16 +116,16 @@ for index in range(0, len(test_data)):
 
     col = len(test_data[index]) + 1
     sheet.cell(row, col, predict_result[index])
-    print(predict_result[index])
+    # print(predict_result[index])
     error = predict_result[index] - float(test_data[index][-1])
     errorPercent = error / float(test_data[index][-1]) * 100
     col += 1
-    print(errorPercent)
+    # print(errorPercent)
     fill = PatternFill("solid", fgColor="1874CD")
     sheet.cell(row, col, errorPercent)
     col += 1
     sheet.cell(row, col, error)
-    if math.fabs(errorPercent) > 5:
+    if math.fabs(errorPercent) > 10:
         sheet.cell(row, col).fill = fill
         sheet.cell(row, col - 1).fill = fill
 
