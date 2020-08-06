@@ -5,6 +5,28 @@ import numpy as np
 import openpyxl
 import math
 from openpyxl.styles import PatternFill
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn import metrics
+
+
+#  MAPE和SMAPE
+def mape(y_true, y_pred):
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    y_pred.astype(np.float64)
+    y_true.astype(np.float64)
+    print(y_pred.dtype)
+    print(y_true.dtype)
+    return np.mean(np.abs((y_pred - y_true) / y_true)) * 100
+
+
+def smape(y_true, y_pred):
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    y_pred.astype(np.float)
+    y_true.astype(np.float)
+    return 2.0 * np.mean(np.abs(y_pred - y_true) / (np.abs(y_pred) + np.abs(y_true))) * 100
+
 
 list_regressor_data = []
 db = pymysql.connect("localhost", "root", "me521..", "vmconsistency")
@@ -20,7 +42,7 @@ for linpack_recording in linpack_recordings:
     stream_select_sql = "select * from stream where cpu_number=" + str(
         linpack_recording['cpu_number']) + " and cpu_frequency=" + str(
         linpack_recording['cpu_frequency']) + " and memory_count=" + str(
-        linpack_recording['memory_count']) + " and type=" + str(linpack_recording['type'])
+        linpack_recording['memory_count']) + " and server_type=" + str(linpack_recording['type'])
     cursor.execute(stream_select_sql)
     stream_select_result = cursor.fetchall()
 
@@ -77,10 +99,10 @@ for regressor_data in list_regressor_data:
         data.append(regressor_data[attribute])
     if data[0] == "6230" or data[0] == "8269":
         train_data.append(data)
-        train_data_target.append(data[-1])
+        train_data_target.append(float(data[-1]))
     else:
         test_data.append(data)
-        test_data_target.append(data[-1])
+        test_data_target.append(float(data[-1]))
 
 print(len(train_data))
 print(len(test_data))
@@ -90,10 +112,28 @@ np_test_data = np.array(test_data)
 
 rfr = RandomForestRegressor()
 
-print(attributes[1:len(attributes) - 1])
-rfr.fit(np_train_data[:, 1:len(attributes) - 1], train_data_target)
-predict_result = rfr.predict(np_test_data[:, 1:len(attributes) - 1])
+# print(attributes[1:len(attributes) - 1])
+# rfr.fit(np_train_data[:, 1:len(attributes) - 1], train_data_target)
+# predict_result = rfr.predict(np_test_data[:, 1:len(attributes) - 1])
 # print(predict_result)
+
+poly_feature = PolynomialFeatures(degree=1)
+poly_train_data = poly_feature.fit_transform(np_train_data[:, 1:len(attributes) - 1])
+poly_test_data = poly_feature.fit_transform(np_test_data[:, 1:len(attributes) - 1])
+# print(np_train_data[:, 1:len(attributes) - 1])
+# lin_reg = LinearRegression()
+# lin_reg.fit(poly_train_data, train_data_target)
+# predict_result = lin_reg.predict(poly_test_data)
+# print(lin_reg.coef_)
+rfr = RandomForestRegressor()
+rfr.fit(poly_train_data, train_data_target)
+predict_result = rfr.predict(poly_test_data)
+print("MSE 均方误差:   " + str(metrics.mean_squared_error(test_data_target, predict_result)))
+print("MAE  平均绝对误差:  " + str(metrics.mean_absolute_error(test_data_target, predict_result)))
+print("R2 决定系数:   " + str(metrics.r2_score(test_data_target, predict_result)))
+print("RMSE 均方根误差  " + str(np.sqrt(metrics.mean_squared_error(test_data_target, predict_result))))
+print("MAPE 平均绝对百分比误差  " + str(mape(test_data_target, predict_result)))
+print("SMAPE 对称平均绝对百分比误差  " + str(smape(test_data_target, predict_result)))
 
 row = 1
 col = 1
