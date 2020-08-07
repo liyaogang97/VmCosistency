@@ -21,7 +21,7 @@ def findMinValue(array):
     return minValue
 
 
-def read_stream(path, type):
+def read_ycsb_redis(path, type):
     db = pymysql.connect("localhost", "root", "me521..", "vmconsistency")
     cursor = db.cursor()
 
@@ -59,12 +59,13 @@ def read_stream(path, type):
             l = os.listdir(path + "\\" + mem + "\\" + cpu)
             resultLoadArray = []
             resultRunArray = []
+
             for e in l:
                 e = str(e)
                 if (e.find("load") != -1):
                     resultLoadArray.append(e)
                 if (e.find("run") != -1):
-                    resultRunArray.append(e);
+                    resultRunArray.append(e)
 
             for result in resultLoadArray:
                 # 正则表达式匹配
@@ -78,33 +79,30 @@ def read_stream(path, type):
                     # lineArray = line.split()
                     # print(lineArray[0])
                     if (line.find("OVERALL") != -1 and line.find("RunTime") != -1):
-                        runTime = float(line.split()[2]);
+                        runTime = float(line.split()[2])
 
                     if (line.find("OVERALL") != -1 and line.find("Throughput")):
                         throughput = float(line.split()[2])
 
-                    if (line.find("READ") != -1 and line.find("95th") != -1):
-                        read_95th = float(line.split()[2])
+                    if (line.find("INSERT") != -1 and line.find("Average") != -1):
+                        averagelatency = float(line.split()[2])
 
-                    if (line.find("READ") != -1 and line.find("99th") != -1):
-                        read_99th = float(line.split()[2])
+                    if (line.find("INSERT") != -1 and line.find("95th") != -1):
+                        insert_95th = float(line.split()[2])
 
-                    if (line.find("WRITE") != -1 and line.find("95th") != -1):
-                        write_95th = float(line.split()[2])
-
-                    if (line.find("WRITE") != -1 and line.find("99th") != -1):
-                        write_99th = float(line.split()[2])
-
-                runTime = findMinValue(runTimeArray)
-                throughput = findMaxValue(throughputArray)
-                read_95th = findMinValue(read_95thArray)
-                read_99th = findMinValue(read_99thArray)
-                write_95th = findMinValue(write_95thArray)
-                write_99th = findMinValue(write_99thArray)
-
-                cursor.execute('insert into ycsb_load_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, runTime, throughput, read_95th, read_99th, write_95th,
-                    write_99th))
+                    if (line.find("INSERT") != -1 and line.find("99th") != -1):
+                        insert_99th = float(line.split()[2])
+                # print("type"+str(type))
+                # print("cpuCount"+str(cpuCount))
+                # print("frequency"+str(frequency))
+                # print("memCount"+str(memCount))
+                # print("runTime"+str(runTime))
+                # print("throughput"+str(throughput))
+                # print("averagelatency"+str(averagelatency))
+                # print(insert_95th)
+                # print(insert_99th)
+                cursor.execute('insert into ycsb_load_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f)' % (
+                    type, cpuCount, frequency, memCount, runTime, throughput, averagelatency, insert_95th, insert_99th))
                 db.commit()
 
             for result in resultRunArray:
@@ -115,16 +113,18 @@ def read_stream(path, type):
 
                 filePath = path + "\\" + mem + "\\" + cpu + "\\" + result
                 lines = linecache.getlines(filePath)
+                runTimeArray = []
+                throughputArray = []
+                read_averagelatencyArray = []
+                read_95thArray = []
+                read_99thArray = []
+                write_averagelatencyArray = []
+                write_95thArray = []
+                write_99thArray = []
                 for line in lines:
                     # lineArray = line.split()
                     # print(lineArray[0])
 
-                    runTimeArray = []
-                    throughputArray = []
-                    read_95thArray = []
-                    read_99thArray = []
-                    write_95thArray = []
-                    write_99thArray = []
                     if (line.find("OVERALL") != -1 and line.find("RunTime") != -1):
                         runTimeArray.append(float(line.split()[2]))
 
@@ -137,14 +137,30 @@ def read_stream(path, type):
                     if (line.find("READ") != -1 and line.find("99th") != -1):
                         read_99thArray.append(float(line.split()[2]))
 
-                    if (line.find("WRITE") != -1 and line.find("95th") != -1):
+                    if (line.find("READ") != -1 and line.find("Average") != -1):
+                        read_averagelatencyArray.append(float(line.split()[2]))
+
+                    if (line.find("UPDATE") != -1 and line.find("95th") != -1):
                         write_95thArray.append(float(line.split()[2]))
 
-                    if (line.find("WRITE") != -1 and line.find("99th") != -1):
+                    if (line.find("UPDATE") != -1 and line.find("99th") != -1):
                         write_99thArray.append(float(line.split()[2]))
 
-                cursor.execute('insert into ycsb_load_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, runTime, throughput, read_95th, read_99th, write_95th,
+                    if (line.find("UPDATE") != -1 and line.find("Average") != -1):
+                        write_averagelatencyArray.append(float(line.split()[2]))
+
+                runTime = findMinValue(runTimeArray)
+                throughput = findMaxValue(throughputArray)
+                read_95th = findMinValue(read_95thArray)
+                read_99th = findMinValue(read_99thArray)
+                read_averagelatency = findMinValue(read_averagelatencyArray)
+                write_95th = findMinValue(write_95thArray)
+                write_99th = findMinValue(write_99thArray)
+                write_averagelatency = findMinValue(write_averagelatencyArray)
+
+                cursor.execute('insert into ycsb_run_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f)' % (
+                    type, cpuCount, frequency, memCount, runTime, throughput, read_averagelatency, read_95th, read_99th,
+                    write_averagelatency, write_95th,
                     write_99th))
                 db.commit()
     db.close()
