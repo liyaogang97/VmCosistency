@@ -22,10 +22,12 @@ select_frequency_category = "select distinct cpu_frequency from stream where ser
 
 select_record = "select * from stream where server_type=%(server_type)s and cpu_number=%(cpu_number)s and cpu_frequency=%(cpu_frequency)s"
 
+
 select_server_type_category = "select distinct server_type from stream "
 cursor.execute(select_server_type_category)
 server_type_category = cursor.fetchall()
 print(server_type_category)
+
 for server_type in server_type_category:
     values = {}
     values["server_type"] = server_type[0]

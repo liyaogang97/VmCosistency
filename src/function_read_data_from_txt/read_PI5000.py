@@ -88,8 +88,13 @@ def read_PI5000(path, type):
             real_time_total = real_time_total / int(cpuCount)
             user_time_total = user_time_total / int(cpuCount)
             sys_time_total = sys_time_total / int(cpuCount)
+            reciprocal_real_time_total = 1000.0 / float(real_time_total)
+            reciprocal_user_time_total = 1000.0 / float(user_time_total)
+            # reciprocal_sys_time_total = 1000.0 / float(sys_time_total)
+
             for memCount in [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]:
-                cursor.execute('insert into pi5000 values (%s,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, real_time_total, user_time_total, sys_time_total))
+                cursor.execute('insert into pi5000 values (%s,%f,%f,%f,%f,%f,%f,%f,%f)' % (
+                    type, cpuCount, frequency, memCount, real_time_total, reciprocal_real_time_total, user_time_total,
+                    reciprocal_user_time_total, sys_time_total))
                 db.commit()
     db.close()
