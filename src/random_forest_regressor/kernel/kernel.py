@@ -118,7 +118,7 @@ labels = []
 for regressor_data in np_list_regressor_data:
     labels.append(float(regressor_data['kernel_run_time']))
 
-train, test, train_data_target, test_data_target = train_test_split(np_list_regressor_data, labels, test_size=0.3)
+train, test, train_data_target, test_data_target = train_test_split(np_list_regressor_data, labels, test_size=0.8)
 
 for iter_train in train:
     data = []
@@ -207,7 +207,7 @@ for index in range(0, len(test_data)):
     sheet.cell(row, col, errorPercent)
     col += 1
     sheet.cell(row, col, error)
-    if math.fabs(errorPercent) > 5:
+    if math.fabs(errorPercent) > 10:
         sheet.cell(row, col).fill = fill
         sheet.cell(row, col - 1).fill = fill
         sheet.cell(row, col - 2).fill = fill

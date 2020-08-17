@@ -18,10 +18,10 @@ def read_linpack(path, type):
 
     for mem in memArray:
 
-        print(path+"\\"+mem)
-        print(os.path.isdir(path+"\\"+mem))
-        if not os.path.isdir(path+"\\"+mem):
-            continue
+        # print(path+"\\"+mem)
+        # print(os.path.isdir(path+"\\"+mem))
+        # if not os.path.isdir(path+"\\"+mem):
+        #     continue
         l = os.listdir(path + "\\" + mem)
 
         # 获取CPU目录
@@ -67,7 +67,7 @@ def read_linpack(path, type):
                         # print(lineArray[3])
                         # print(lineArray[4])
                         cursor.execute('insert into linpack values (%s,%f,%f,%f,%f,%f)' % (
-                        type, cpuCount, frequency, memCount, float(lineArray[3]), float(lineArray[4])))
+                        repr(type), cpuCount, frequency, memCount, float(lineArray[3]), float(lineArray[4])))
                         db.commit()
                         break
     db.close()

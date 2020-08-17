@@ -200,7 +200,7 @@ for index in range(0, len(test_data)):
     sheet.cell(row, col, errorPercent)
     col += 1
     sheet.cell(row, col, error)
-    if math.fabs(errorPercent) > 5:
+    if math.fabs(errorPercent) > 10:
         sheet.cell(row, col).fill = fill
         sheet.cell(row, col - 1).fill = fill
         sheet.cell(row, col - 2).fill = fill

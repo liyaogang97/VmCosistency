@@ -67,6 +67,6 @@ def read_fio_read(path, type):
                         BW = lineArray[2][BW_first + 1:BW_second]
                         # print(IOPS)
                         cursor.execute('insert into fio_read values (%s,%f,%f,%f,%f,%f)' % (
-                        type, cpuCount, frequency, float(memCount), float(IOPS), float(BW)))
+                            type, cpuCount, frequency, float(memCount), float(IOPS), float(BW)))
                         db.commit()
     db.close()

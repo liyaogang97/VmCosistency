@@ -61,9 +61,9 @@ def read_PI5000(path, type):
                     index) + ".txt"
                 lines = linecache.getlines(filePath)
 
-                print(cpu)
-                print(frequency)
-                print(index)
+                # print(cpu)
+                # print(frequency)
+                # print(index)
 
                 real_time = lines[-3].split()[1]
                 m_index = real_time.index("m")
@@ -94,7 +94,8 @@ def read_PI5000(path, type):
 
             for memCount in [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]:
                 cursor.execute('insert into pi5000 values (%s,%f,%f,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, real_time_total, reciprocal_real_time_total, user_time_total,
+                    repr(type), cpuCount, frequency, memCount, real_time_total, reciprocal_real_time_total,
+                    user_time_total,
                     reciprocal_user_time_total, sys_time_total))
                 db.commit()
     db.close()
