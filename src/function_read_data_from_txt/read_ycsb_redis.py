@@ -102,7 +102,8 @@ def read_ycsb_redis(path, type):
                 # print(insert_95th)
                 # print(insert_99th)
                 cursor.execute('insert into ycsb_load_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, runTime, throughput, averagelatency, insert_95th, insert_99th))
+                    repr(type), cpuCount, frequency, memCount, runTime, throughput, averagelatency, insert_95th,
+                    insert_99th))
                 db.commit()
 
             for result in resultRunArray:
@@ -159,7 +160,8 @@ def read_ycsb_redis(path, type):
                 write_averagelatency = findMinValue(write_averagelatencyArray)
 
                 cursor.execute('insert into ycsb_run_redis values (%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f)' % (
-                    type, cpuCount, frequency, memCount, runTime, throughput, read_averagelatency, read_95th, read_99th,
+                    repr(type), cpuCount, frequency, memCount, runTime, throughput, read_averagelatency, read_95th,
+                    read_99th,
                     write_averagelatency, write_95th,
                     write_99th))
                 db.commit()
