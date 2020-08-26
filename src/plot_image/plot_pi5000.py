@@ -66,7 +66,16 @@ for cpu_count_index in range(0, len(first_image_vcpu_count)):
         ax.set_xticks(np.array(first_image_frequency_x) / 10.0)
         ax.set_title('the number of VCPU is ' + str(first_image_vcpu_count[cpu_count_index]))
 
+server_dict = {}
+server_dict['6230'] = '#3'
+server_dict['8269'] = '#2'
+server_dict['8260'] = '#1'
 
-figure.legend(line_list, labels=server_type_list, frameon=False, ncol=1, bbox_to_anchor=(1, 0.8))
+label_list=[]
+for server in server_type_list:
+    label_list.append(server_dict[server])
+
+print(label_list)
+figure.legend(line_list, labels=label_list, frameon=False, ncol=1, bbox_to_anchor=(1, 0.8))
 figure.savefig("pi5000.png")
 # plt.show()

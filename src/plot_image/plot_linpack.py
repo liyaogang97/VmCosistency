@@ -71,6 +71,16 @@ for cpu_count_index in range(0, len(first_image_vcpu_count)):
 
     print(result)
 
-figure.legend(line_list, labels=server_type_list, loc="lower center", frameon=False, ncol=4, bbox_to_anchor=(0.54, 0))
+server_dict = {}
+server_dict['6230'] = '#3'
+server_dict['8269'] = '#2'
+server_dict['8260'] = '#1'
+label_list=[]
+for server in server_type_list:
+    label_list.append(server_dict[server])
+
+print(label_list)
+
+figure.legend(line_list, labels=label_list, loc="lower center", frameon=False, ncol=4, bbox_to_anchor=(0.54, 0))
 figure.savefig("linpack.png")
 plt.show()

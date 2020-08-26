@@ -70,6 +70,17 @@ for cpu_count_index in range(0, len(first_image_vcpu_count)):
         ax.set_title('the number of VCPU is ' + str(first_image_vcpu_count[cpu_count_index]), x=0.5, y=0.94)
 
 print(server_type_list)
-figure.legend(line_list, labels=server_type_list, loc="lower center", frameon=False, ncol=4, bbox_to_anchor=(0.54, 0))
+
+server_dict = {}
+server_dict['6230'] = '#3'
+server_dict['8269'] = '#2'
+server_dict['8260'] = '#1'
+label_list=[]
+for server in server_type_list:
+    label_list.append(server_dict[server])
+
+print(label_list)
+
+figure.legend(line_list, labels=label_list, loc="lower center", frameon=False, ncol=4, bbox_to_anchor=(0.54, 0))
 figure.savefig("fio_write.png")
 plt.show()
